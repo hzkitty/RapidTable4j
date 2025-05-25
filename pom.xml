@@ -5,8 +5,38 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.github.hzkitty</groupId>
-    <artifactId>rapidtable4j</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <artifactId>rapid-table4j</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+
+    <name>rapid-table4j</name>
+    <url>https://github.com/hzkitty/RapidTable4j</url>
+    <description>RapidTable表格识别，Java移植版本(ONNXRuntime + OpenCV)</description>
+
+    <developers>
+        <developer>
+            <name>hzkitty</name>
+            <email>1758225523@qq.com</email>
+            <timezone>+8</timezone>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/hzkitty/RapidTable4j.git</connection>
+        <developerConnection>scm:git:ssh://github.com/hzkitty/RapidTable4j.git</developerConnection>
+        <url>https://github.com/hzkitty/RapidTable4j/tree/main</url>
+    </scm>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -18,7 +48,7 @@
         <dependency>
             <groupId>io.github.hzkitty</groupId>
             <artifactId>rapidocr4j</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.2</version>
         </dependency>
 
         <!--    测试相关   -->
@@ -43,4 +73,74 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <!--   source源码插件 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--   javadoc插件 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.6.0</version>
+                <configuration>
+                    <!--忽略非标准javadoc注释-->
+                    <doclint>none</doclint>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>3.2.4</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--   central发布插件    -->
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.6.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>central</publishingServerId>
+                    <checksums>required</checksums>
+                    <deploymentName>rapid-table4j</deploymentName>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
 </project>

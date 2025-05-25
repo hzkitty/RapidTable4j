@@ -1,4 +1,4 @@
-package io.github.hzkitty.rapid_table.utils;
+package io.github.hzkitty.rapidtable.utils;
 
 import org.opencv.core.*;
 import org.opencv.imgcodecs.Imgcodecs;

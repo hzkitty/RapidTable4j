@@ -1,4 +1,4 @@
-package io.github.hzkitty.rapid_table.table_structure;
+package io.github.hzkitty.rapidtable.tablestructure;
 
 import ai.onnxruntime.*;
 import ai.onnxruntime.OrtSession.Result;
@@ -22,8 +22,8 @@ public class OrtInferSession {
     private final OrtEnvironment env;
     private final OrtSession session;
 
-    private boolean useCuda = false;
-    private boolean useDirectML = false;
+    private boolean useCuda;
+    private boolean useDirectML;
 
 
     public OrtInferSession(OrtInferConfig ortInferConfig) {
@@ -41,7 +41,7 @@ public class OrtInferSession {
             SessionOptions sessionOptions = initSessionOptions(ortInferConfig);
             EnumSet<OrtProvider> availableProviders = env.getAvailableProviders();
             if (this.useCuda && availableProviders.contains(OrtProvider.CUDA)) {
-                OrtCUDAProviderOptions providerOptions = new OrtCUDAProviderOptions(0);
+                OrtCUDAProviderOptions providerOptions = new OrtCUDAProviderOptions(ortInferConfig.deviceId);
                 // kNextPowerOfTwo（默认值）以 2 的幂数扩展，而 kSameAsRequested 每次扩展的大小与分配请求的大小相同。
                 providerOptions.add("arena_extend_strategy", "kNextPowerOfTwo");
                 providerOptions.add("cudnn_conv_algo_search", "EXHAUSTIVE");
@@ -51,13 +51,13 @@ public class OrtInferSession {
             }
 
             if (this.useDirectML && availableProviders.contains(OrtProvider.DIRECT_ML)) {
-                sessionOptions.addDirectML(0);
+                sessionOptions.addDirectML(ortInferConfig.deviceId);
                 logger.info("Requested DirectML EP - might not be supported in certain Java packages.");
             }
 
             // 最后添加 CPU
             if (availableProviders.contains(OrtProvider.CPU)) {
-                sessionOptions.addCPU(true);
+                sessionOptions.addCPU(ortInferConfig.useArena);
                 logger.info("CPU EP added to session options.");
             }
 
@@ -120,7 +120,6 @@ public class OrtInferSession {
                     // 提取实际的数据
                     outputs[i] = result.get(i).getValue();
                 }
-
                 return outputs;
             }
         }

@@ -1,4 +1,4 @@
-package io.github.hzkitty.rapid_table.table_matcher;
+package io.github.hzkitty.rapidtable.tablematcher;
 
 import io.github.hzkitty.entity.Pair;
 

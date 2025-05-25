@@ -1,9 +1,10 @@
-package io.github.hzkitty.rapid_table.entity;
+package io.github.hzkitty.rapidtable.entity;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class TableResult {
+
     private String htmlStr;
 
     private List<float[]> cellBoxes;

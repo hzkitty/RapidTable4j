@@ -1,4 +1,4 @@
-package io.github.hzkitty.rapid_table.table_structure;
+package io.github.hzkitty.rapidtable.tablestructure;
 
 import io.github.hzkitty.entity.Pair;
 import org.opencv.core.*;

@@ -1,4 +1,4 @@
-package io.github.hzkitty.rapid_table.utils;
+package io.github.hzkitty.rapidtable.utils;
 
 /**
  * 自定义异常类，用于在加载图片或处理图片时抛出错误

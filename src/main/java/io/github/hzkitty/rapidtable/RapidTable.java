@@ -1,46 +1,100 @@
-package io.github.hzkitty.rapid_table;
+package io.github.hzkitty.rapidtable;
 
 import io.github.hzkitty.entity.*;
-import io.github.hzkitty.rapid_table.entity.TableResult;
-import io.github.hzkitty.rapid_table.table_matcher.TableMatch;
-import io.github.hzkitty.rapid_table.table_structure.TableStructurer;
-import io.github.hzkitty.rapid_table.utils.LoadImage;
+import io.github.hzkitty.rapidtable.entity.TableConfig;
+import io.github.hzkitty.rapidtable.entity.TableModelType;
+import io.github.hzkitty.rapidtable.entity.TableResult;
+import io.github.hzkitty.rapidtable.tablematcher.TableMatch;
+import io.github.hzkitty.rapidtable.tablestructure.TableStructurer;
+import io.github.hzkitty.rapidtable.utils.LoadImage;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 
+import java.awt.image.BufferedImage;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class RapidTable {
 
-    private String modelType;
-    private LoadImage loadImg;
-    private TableStructurer tableStructure;
-    private TableMatch tableMatcher;
+    private final TableModelType modelType;
+    private final LoadImage loadImg;
+    private final TableStructurer tableStructure;
+    private final TableMatch tableMatcher;
 
-    public RapidTable() {
-        this("models/slanet-plus.onnx", "slanet-plus", false);
+    public static RapidTable create() {
+        return new RapidTable();
     }
 
-    public RapidTable(String modelPath, String modelType, boolean useCuda) {
-        this.modelType = modelType;
+    public static RapidTable create(TableConfig config) {
+        return new RapidTable(config);
+    }
+
+    public RapidTable() {
+        this(new TableConfig());
+    }
+
+    public RapidTable(TableConfig config) {
+        this.modelType = config.modelType;
         // 初始化 LoadImage
         this.loadImg = new LoadImage();
 
-        OrtInferConfig config = new OrtInferConfig();
-        config.setModelPath(modelPath);
-        config.setUseCuda(useCuda);
+        OrtInferConfig inferConfig = new OrtInferConfig();
+        inferConfig.setModelPath(config.modelPath);
+        inferConfig.setUseCuda(config.useCuda);
+        inferConfig.setDeviceId(config.deviceId);
+        inferConfig.setUseArena(true);
 
         // 1. 初始化表格结构识别器
-        this.tableStructure = new TableStructurer(config);
+        this.tableStructure = new TableStructurer(inferConfig);
 
         // 2. 初始化表格匹配器
         this.tableMatcher = new TableMatch();
     }
 
+    public TableResult run(String imagePath, List<RecResult> ocrResult) throws Exception {
+        return this.runImpl(imagePath, ocrResult, false);
+    }
 
-    public TableResult run(Object imgContent, List<RecResult> ocrResult, boolean returnLogicPoints) throws Exception {
+    public TableResult run(Path imagePath, List<RecResult> ocrResult) throws Exception {
+        return this.runImpl(imagePath, ocrResult, false);
+    }
+
+    public TableResult run(byte[] imageData, List<RecResult> ocrResult) throws Exception {
+        return this.runImpl(imageData, ocrResult, false);
+    }
+
+    public TableResult run(BufferedImage image, List<RecResult> ocrResult) throws Exception {
+        return this.runImpl(image, ocrResult, false);
+    }
+
+    public TableResult run(Mat mat, List<RecResult> ocrResult) throws Exception {
+        return this.runImpl(mat, ocrResult, false);
+    }
+
+    public TableResult run(String imagePath, List<RecResult> ocrResult, boolean returnLogicPoints) throws Exception {
+        return this.runImpl(imagePath, ocrResult, returnLogicPoints);
+    }
+
+    public TableResult run(Path imagePath, List<RecResult> ocrResult, boolean returnLogicPoints) throws Exception {
+        return this.runImpl(imagePath, ocrResult, returnLogicPoints);
+    }
+
+    public TableResult run(byte[] imageData, List<RecResult> ocrResult, boolean returnLogicPoints) throws Exception {
+        return this.runImpl(imageData, ocrResult, returnLogicPoints);
+    }
+
+    public TableResult run(BufferedImage image, List<RecResult> ocrResult, boolean returnLogicPoints) throws Exception {
+        return this.runImpl(image, ocrResult, returnLogicPoints);
+    }
+
+    public TableResult run(Mat mat, List<RecResult> ocrResult, boolean returnLogicPoints) throws Exception {
+        return this.runImpl(mat, ocrResult, returnLogicPoints);
+    }
+
+
+    private TableResult runImpl(Object imgContent, List<RecResult> ocrResult, boolean returnLogicPoints) throws Exception {
         // 1. 加载图像
         Mat img = this.loadImg.call(imgContent);
 
@@ -48,18 +102,18 @@ public class RapidTable {
         int h = img.rows();
         int w = img.cols();
 
-        // 3. 解析 dt_boxes, rec_res
+        // 2. 解析 dt_boxes, rec_res
         Pair<List<float[]>, List<Pair<String, Float>>> boxAndRec = getBoxesRecs(ocrResult, h, w);
         List<float[]> dtBoxes = boxAndRec.getLeft();
         List<Pair<String, Float>> recRes = boxAndRec.getRight();
 
-        // 4. 表格结构推理: pred_structures, pred_bboxes, ...
+        // 3. 表格结构推理: pred_structures, pred_bboxes, ...
         Triple<List<String>, List<float[]>, Double> structureRes = this.tableStructure.call(img);
         List<String> predStructures = structureRes.getLeft();
         List<float[]> predBBoxes = structureRes.getMiddle();
 
-        // 如果是 slanet-plus，需要缩放
-        if ("slanet-plus".equalsIgnoreCase(this.modelType)) {
+        // 4、如果是 slanet-plus，需要缩放
+        if (TableModelType.SLANET_PLUS.equals(this.modelType)) {
             predBBoxes = adaptSlanetPlus(img, predBBoxes);
         }
 

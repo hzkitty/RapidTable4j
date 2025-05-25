@@ -1,4 +1,4 @@
-package io.github.hzkitty.rapid_table.table_matcher;
+package io.github.hzkitty.rapidtable.tablematcher;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package io.github.hzkitty.rapid_table.table_structure;
+package io.github.hzkitty.rapidtable.tablestructure;
 
 import io.github.hzkitty.entity.OrtInferConfig;
 import io.github.hzkitty.entity.Pair;
@@ -6,7 +6,6 @@ import io.github.hzkitty.entity.Triple;
 import org.opencv.core.Mat;
 
 import java.util.*;
-
 
 public class TableStructurer {
 
