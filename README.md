@@ -35,6 +35,9 @@ slanet_plus是paddlex内置的SLANet升级版模型，准确率有大幅提升
 
 由于模型较小，预先将slanet-plus表格识别模型(`slanet-plus.onnx`)打包进了jar包内。其余模型在初始化`RapidTable`类时，通过`TableConfig的modelPath`来指定自己模型路径。注意仅限于现在支持的`TableModelType`。
 
+## 🛠️ 待办：
+
+* 支持SLANet-wired和SLANet-wireless最新开源模型 [SLANet](https://paddlepaddle.github.io/PaddleX/latest/module_usage/tutorials/ocr_modules/table_structure_recognition.html)
 
 ## 🎉 快速开始
 
